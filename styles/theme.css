@@ -1,17 +1,30 @@
+/* Cards */
+
 .summary-card {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    padding: 24px;
-    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid #e6e8ec;
+    padding: 26px;
+    border-radius: 16px;
+    transition: all 0.2s ease;
 }
 
+.summary-card:hover {
+    transform: translateY(-3px);
+    border-color: #d1d5db;
+}
+
+/* Typography */
+
 .summary-title {
-    font-size: 13px;
+    font-size: 12px;
     color: #777;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .summary-value {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 600;
+    color: #111;
 }
