@@ -19,6 +19,8 @@ export function initMonthFilter() {
     const momData = stateStore.getState().rawData.MOM || [];
     const select = document.getElementById("month-filter");
 
+    select.innerHTML = `<option value="">All Months</option>`;
+
     momData.forEach(row => {
       const option = document.createElement("option");
       option.value = row.Month;
@@ -29,6 +31,8 @@ export function initMonthFilter() {
 
   wrapper.addEventListener("change", (e) => {
     stateStore.setFilter("month", e.target.value);
+    stateStore.setFilter("startDate", null);
+    stateStore.setFilter("endDate", null);
     eventBus.emit("FILTER_CHANGED");
   });
 }
