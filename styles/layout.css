@@ -93,19 +93,6 @@ body {
     gap: 30px;
 }
 
-.filters-right input {
-    padding: 9px 14px;
-    border-radius: 12px;
-    border: 1px solid #dcdfe4;
-    width: 280px;
-    font-size: 13px;
-    outline: none;
-}
-
-.filters-right input:focus {
-    border-color: #111;
-}
-
 .filter-group {
     display: flex;
     flex-direction: column;
@@ -120,6 +107,39 @@ body {
     border: 1px solid #dcdfe4;
     background: #fafbfc;
     font-size: 13px;
+}
+
+/* SEARCH WRAPPER */
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper input {
+    padding: 9px 36px 9px 14px;
+    border-radius: 12px;
+    border: 1px solid #dcdfe4;
+    width: 280px;
+    font-size: 13px;
+    outline: none;
+}
+
+.search-wrapper input:focus {
+    border-color: #111;
+}
+
+.clear-search {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #999;
+    cursor: pointer;
+    display: none;
+}
+
+.clear-search:hover {
+    color: #111;
 }
 
 /* PROGRESS */
