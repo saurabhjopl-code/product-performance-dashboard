@@ -3,22 +3,26 @@ import { renderExecutiveSummary } from '../summaries/executiveSummary.js';
 
 export const STATE = {
     data: {},
-    filteredData: {}
+    filteredData: {},
+    searchQuery: ""
 };
 
 export async function initApp() {
     showLoading();
 
     STATE.data = await loadAllData();
+
     setupNavigation();
     setupFilters();
+    setupSearch();
 
-    applyFilters(); // initial load with default month
+    applyFilters(); // initial render
 
     hideLoading();
 }
 
-/* Navigation */
+/* ---------------- NAVIGATION ---------------- */
+
 function setupNavigation() {
     const buttons = document.querySelectorAll('.nav-btn');
 
@@ -38,16 +42,18 @@ function setupNavigation() {
     });
 }
 
-/* Filters */
+/* ---------------- FILTER SETUP ---------------- */
+
 function setupFilters() {
     if (!STATE.data.GMV) return;
 
     const monthSelect = document.getElementById("filter-month");
     const dateSelect = document.getElementById("filter-date");
 
-    const dates = STATE.data.GMV.map(r => r["Order Date"]);
-    const uniqueMonths = [...new Set(dates.map(d => d.slice(0,7)))].sort();
+    const allDates = STATE.data.GMV.map(r => r["Order Date"]);
+    const uniqueMonths = [...new Set(allDates.map(d => d.slice(0, 7)))].sort();
 
+    // Populate months
     uniqueMonths.forEach(m => {
         const option = document.createElement("option");
         option.value = m;
@@ -55,8 +61,8 @@ function setupFilters() {
         monthSelect.appendChild(option);
     });
 
-    // Default = current month
-    const currentMonth = new Date().toISOString().slice(0,7);
+    // Default to current month or latest available
+    const currentMonth = new Date().toISOString().slice(0, 7);
     if (uniqueMonths.includes(currentMonth)) {
         monthSelect.value = currentMonth;
     } else {
@@ -73,7 +79,8 @@ function setupFilters() {
     populateDates();
 }
 
-/* Populate Date Dropdown */
+/* ---------------- DATE DROPDOWN ---------------- */
+
 function populateDates() {
     const month = document.getElementById("filter-month").value;
     const dateSelect = document.getElementById("filter-date");
@@ -94,7 +101,19 @@ function populateDates() {
     });
 }
 
-/* Apply Filters */
+/* ---------------- GLOBAL SEARCH ---------------- */
+
+function setupSearch() {
+    const searchInput = document.getElementById("global-search");
+
+    searchInput.addEventListener("input", (e) => {
+        STATE.searchQuery = e.target.value.toLowerCase().trim();
+        applyFilters();
+    });
+}
+
+/* ---------------- APPLY FILTER PIPELINE ---------------- */
+
 function applyFilters() {
     const month = document.getElementById("filter-month").value;
     const date = document.getElementById("filter-date").value;
@@ -107,6 +126,15 @@ function applyFilters() {
         filtered = filtered.filter(r => r["Order Date"] === date);
     }
 
+    // Global Search across key columns
+    if (STATE.searchQuery) {
+        filtered = filtered.filter(row => {
+            return Object.values(row).some(value =>
+                String(value).toLowerCase().includes(STATE.searchQuery)
+            );
+        });
+    }
+
     STATE.filteredData = {
         ...STATE.data,
         GMV: filtered
@@ -115,7 +143,8 @@ function applyFilters() {
     renderExecutiveSummary(STATE.filteredData);
 }
 
-/* Loading */
+/* ---------------- LOADING ---------------- */
+
 function showLoading() {
     document.getElementById("progress-wrapper").style.display = "block";
 }
