@@ -1,3 +1,5 @@
+import { renderTrendChart } from "./trendChart.js";
+
 export function renderSummary(data) {
   const root = document.getElementById("executive-root");
 
@@ -46,7 +48,13 @@ export function renderSummary(data) {
       </div>
 
     </div>
+
+    <div style="margin-top:40px;">
+      <canvas id="trendChart"></canvas>
+    </div>
   `;
+
+  renderTrendChart(data.dateWiseData);
 }
 
 function formatNumber(num) {
