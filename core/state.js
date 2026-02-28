@@ -1,11 +1,13 @@
 import { loadAllData } from './dataLoader.js';
 import { renderExecutiveSummary } from '../summaries/executiveSummary.js';
+import { renderDateWiseReport } from '../reports/dateWiseReport.js';
 
 export const STATE = {
     data: {},
     filteredData: {},
     searchQuery: "",
-    debounceTimer: null
+    debounceTimer: null,
+    currentReport: "date"
 };
 
 export async function initApp() {
@@ -14,6 +16,7 @@ export async function initApp() {
     STATE.data = await loadAllData();
 
     setupNavigation();
+    setupReportNavigation();
     setupFilters();
     setupSearch();
     setupReset();
@@ -23,21 +26,49 @@ export async function initApp() {
     hideLoading();
 }
 
-/* NAVIGATION */
+/* MAIN NAV */
 function setupNavigation() {
     const buttons = document.querySelectorAll('.nav-btn');
+
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             const view = btn.dataset.view;
+
             document.getElementById('executive-view').style.display =
                 view === "executive" ? "block" : "none";
+
             document.getElementById('reports-view').style.display =
                 view === "reports" ? "block" : "none";
+
+            if (view === "reports") {
+                renderCurrentReport();
+            }
         });
     });
+}
+
+/* REPORT NAV */
+function setupReportNavigation() {
+    const buttons = document.querySelectorAll('.report-btn');
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            STATE.currentReport = btn.dataset.report;
+            renderCurrentReport();
+        });
+    });
+}
+
+function renderCurrentReport() {
+    if (STATE.currentReport === "date") {
+        renderDateWiseReport(STATE.filteredData);
+    }
 }
 
 /* FILTERS */
@@ -88,7 +119,7 @@ function populateDates() {
     });
 }
 
-/* SEARCH WITH CLEAR + DEBOUNCE */
+/* SEARCH */
 function setupSearch() {
     const input = document.getElementById("global-search");
     const clearBtn = document.getElementById("clear-search");
@@ -148,9 +179,12 @@ function applyFilters() {
 
     updateFilterSummary(month, filtered.length);
     renderExecutiveSummary(STATE.filteredData);
+
+    if (document.getElementById('reports-view').style.display === "block") {
+        renderCurrentReport();
+    }
 }
 
-/* SUMMARY */
 function updateFilterSummary(month, count) {
     document.getElementById("filter-summary").textContent =
         `${month} | ${count} Records`;
