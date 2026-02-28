@@ -20,22 +20,43 @@ export function renderExecutiveSummary(data) {
     const netRevenue = grossRevenue - cancelRevenue - returnRevenue;
     const netUnits = grossUnits - cancelUnits - returnUnits;
 
+    const cancelPct = grossRevenue ? (cancelRevenue / grossRevenue) * 100 : 0;
+    const returnPct = grossRevenue ? (returnRevenue / grossRevenue) * 100 : 0;
+    const netRealisation = grossRevenue ? (netRevenue / grossRevenue) * 100 : 0;
+    const asp = netUnits ? netRevenue / netUnits : 0;
+
     container.innerHTML = `
         <div class="summary-row">
-            ${createCard("Gross Sales", grossRevenue, grossUnits)}
-            ${createCard("Cancellations", cancelRevenue, cancelUnits)}
-            ${createCard("Returns", returnRevenue, returnUnits)}
-            ${createCard("Net Sales", netRevenue, netUnits)}
+            ${createRevenueCard("Gross Sales", grossRevenue, grossUnits)}
+            ${createRevenueCard("Cancellations", cancelRevenue, cancelUnits)}
+            ${createRevenueCard("Returns", returnRevenue, returnUnits)}
+            ${createRevenueCard("Net Sales", netRevenue, netUnits)}
+        </div>
+
+        <div class="summary-row secondary">
+            ${createSimpleCard("Cancel %", cancelPct.toFixed(2) + "%")}
+            ${createSimpleCard("Return %", returnPct.toFixed(2) + "%")}
+            ${createSimpleCard("Net Realisation %", netRealisation.toFixed(2) + "%")}
+            ${createSimpleCard("Avg Selling Price", formatCurrency(asp))}
         </div>
     `;
 }
 
-function createCard(title, revenue, units) {
+function createRevenueCard(title, revenue, units) {
     return `
         <div class="kpi-card">
             <div class="kpi-title">${title}</div>
             <div class="kpi-main">${formatCurrency(revenue)}</div>
             <div class="kpi-sub">${formatNumber(units)} units</div>
+        </div>
+    `;
+}
+
+function createSimpleCard(title, value) {
+    return `
+        <div class="kpi-card small">
+            <div class="kpi-title">${title}</div>
+            <div class="kpi-main">${value}</div>
         </div>
     `;
 }
