@@ -12,13 +12,12 @@ function compute() {
 
   const momData = state.rawData.MOM || [];
   const dateWiseData = state.rawData.DATE_WISE || [];
-
   const { month, startDate, endDate } = state.filters;
 
   let summaryData;
   let filteredDateWise;
 
-  // DATE RANGE FILTER
+  // ----- DATE RANGE -----
   if (startDate || endDate) {
 
     const start = startDate ? new Date(startDate) : null;
@@ -36,8 +35,9 @@ function compute() {
     summaryData = aggregateFromDateWise(filteredDateWise);
   }
 
-  // MONTH FILTER
+  // ----- MONTH FILTER -----
   else if (month) {
+
     summaryData = momData.find(row => row.Month === month);
 
     const monthDate = parseDDMMYYYY(month);
@@ -51,13 +51,29 @@ function compute() {
     });
   }
 
-  // ALL
+  // ----- ALL -----
   else {
     summaryData = aggregateAll(momData);
     filteredDateWise = dateWiseData;
   }
 
-  if (!summaryData) return;
+  if (!summaryData) {
+    renderSummary({
+      grossSales: 0,
+      grossUnits: 0,
+      cancelRevenue: 0,
+      cancelUnits: 0,
+      returnRevenue: 0,
+      returnUnits: 0,
+      netRevenue: 0,
+      netUnits: 0,
+      cancelPercent: 0,
+      returnPercent: 0,
+      month: "No Data",
+      dateWiseData: []
+    });
+    return;
+  }
 
   renderSummary({
     grossSales: Number(summaryData.GMV || 0),
