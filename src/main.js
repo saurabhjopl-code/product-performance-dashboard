@@ -1,9 +1,21 @@
 import { initLayout } from "./ui/layout.js";
 import { initNavbar } from "./ui/navbar.js";
-import { initProgressBar } from "./ui/progressBar.js";
+import { initProgressBar, setProgress } from "./ui/progressBar.js";
+import { loadAllData } from "./core/dataLoader.js";
+import { eventBus } from "./core/eventBus.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+import { initGMVSummary } from "./domains/gmv/summary/index.js";
+import { initMonthFilter } from "./filters/monthFilter.js";
+
+document.addEventListener("DOMContentLoaded", async () => {
   initProgressBar();
   initNavbar();
   initLayout();
+  initMonthFilter();
+  initGMVSummary();
+
+  eventBus.on("DATA_LOADING_START", () => setProgress(30));
+  eventBus.on("DATA_LOADING_COMPLETE", () => setProgress(100));
+
+  await loadAllData();
 });
