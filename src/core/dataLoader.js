@@ -3,30 +3,40 @@ import { stateStore } from "./stateStore.js";
 import { eventBus } from "./eventBus.js";
 
 export async function loadAllData() {
-  eventBus.emit("DATA_LOADING_START");
+  try {
+    eventBus.emit("DATA_LOADING_START");
 
-  const result = {};
+    const result = {};
 
-  for (const domain in SHEETS) {
-    result[domain] = {};
+    for (const domain in SHEETS) {
+      result[domain] = {};
 
-    for (const sheet in SHEETS[domain]) {
-      const url = SHEETS[domain][sheet];
+      for (const sheet in SHEETS[domain]) {
+        const url = SHEETS[domain][sheet];
 
-      const response = await fetch(url);
-      const text = await response.text();
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch ${sheet}`);
+        }
 
-      const parsed = Papa.parse(text, {
-        header: true,
-        skipEmptyLines: true
-      });
+        const text = await response.text();
 
-      result[domain][sheet] = parsed.data;
+        const parsed = Papa.parse(text, {
+          header: true,
+          skipEmptyLines: true
+        });
+
+        result[domain][sheet] = parsed.data;
+      }
     }
+
+    stateStore.setRawData(result);
+    stateStore.setFilteredData(result);
+
+    eventBus.emit("DATA_LOADING_COMPLETE");
+
+  } catch (error) {
+    console.error("Data Loading Error:", error);
+    eventBus.emit("DATA_LOADING_COMPLETE");
   }
-
-  stateStore.setRawData(result);
-  stateStore.setFilteredData(result);
-
-  eventBus.emit("DATA_LOADING_COMPLETE");
 }
