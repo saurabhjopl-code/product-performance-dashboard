@@ -1,6 +1,6 @@
 import { initLayout } from "./ui/layout.js";
 import { initNavbar } from "./ui/navbar.js";
-import { startProgress, finishProgress } from "./ui/progressBar.js";
+import { initProgressBar, startProgress, finishProgress } from "./ui/progressBar.js";
 import { loadAllData } from "./core/dataLoader.js";
 import { eventBus } from "./core/eventBus.js";
 
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initGMVSummary();
 
   eventBus.on("DATA_LOADING_START", startProgress);
-eventBus.on("DATA_LOADING_COMPLETE", finishProgress);
+  eventBus.on("DATA_LOADING_COMPLETE", finishProgress);
 
   await loadAllData();
 });
