@@ -6,7 +6,6 @@ export const STATE = {
     data: {},
     filteredData: {},
     searchQuery: "",
-    debounceTimer: null,
     currentView: "executive",
     currentReport: "date"
 };
@@ -22,136 +21,53 @@ export async function initApp() {
     setupSearch();
     setupReset();
 
-    applyFilters();   // only updates STATE
+    applyFilters(); // only updates data
+    renderExecutive(); // initial render
 
     hideLoading();
 }
 
-/* ---------------- MAIN NAV ---------------- */
+/* ---------------- VIEW ROUTER ---------------- */
 
 function setupNavigation() {
-    const buttons = document.querySelectorAll('.nav-btn');
-
-    buttons.forEach(btn => {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            buttons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            document.querySelectorAll('.nav-btn')
+                .forEach(b => b.classList.remove('active'));
 
+            btn.classList.add('active');
             STATE.currentView = btn.dataset.view;
 
-            document.getElementById('executive-view').style.display =
-                STATE.currentView === "executive" ? "block" : "none";
-
-            document.getElementById('reports-view').style.display =
-                STATE.currentView === "reports" ? "block" : "none";
-
-            renderActiveView();
+            toggleView();
         });
     });
 }
 
-/* ---------------- REPORT NAV ---------------- */
+function toggleView() {
+    const exec = document.getElementById('executive-view');
+    const reports = document.getElementById('reports-view');
+
+    if (STATE.currentView === "executive") {
+        exec.style.display = "block";
+        reports.style.display = "none";
+        renderExecutive();
+    } else {
+        exec.style.display = "none";
+        reports.style.display = "block";
+        renderReport();
+    }
+}
 
 function setupReportNavigation() {
-    const buttons = document.querySelectorAll('.report-btn');
-
-    buttons.forEach(btn => {
+    document.querySelectorAll('.report-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            buttons.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.report-btn')
+                .forEach(b => b.classList.remove('active'));
+
             btn.classList.add('active');
-
             STATE.currentReport = btn.dataset.report;
-
-            if (STATE.currentView === "reports") {
-                renderCurrentReport();
-            }
+            renderReport();
         });
-    });
-}
-
-/* ---------------- FILTERS ---------------- */
-
-function setupFilters() {
-    const monthSelect = document.getElementById("filter-month");
-    const dateSelect = document.getElementById("filter-date");
-
-    const dates = STATE.data.GMV.map(r => r["Order Date"]);
-    const months = [...new Set(dates.map(d => d.slice(0,7)))].sort();
-
-    months.forEach(m => {
-        const opt = document.createElement("option");
-        opt.value = m;
-        opt.textContent = m;
-        monthSelect.appendChild(opt);
-    });
-
-    const currentMonth = new Date().toISOString().slice(0,7);
-    monthSelect.value = months.includes(currentMonth)
-        ? currentMonth
-        : months[months.length - 1];
-
-    monthSelect.addEventListener("change", () => {
-        populateDates();
-        applyFilters();
-    });
-
-    dateSelect.addEventListener("change", applyFilters);
-
-    populateDates();
-}
-
-function populateDates() {
-    const month = document.getElementById("filter-month").value;
-    const dateSelect = document.getElementById("filter-date");
-
-    dateSelect.innerHTML = '<option value="">All Dates</option>';
-
-    const dates = STATE.data.GMV
-        .map(r => r["Order Date"])
-        .filter(d => d.startsWith(month));
-
-    [...new Set(dates)].sort().forEach(d => {
-        const opt = document.createElement("option");
-        opt.value = d;
-        opt.textContent = d;
-        dateSelect.appendChild(opt);
-    });
-}
-
-/* ---------------- SEARCH ---------------- */
-
-function setupSearch() {
-    const input = document.getElementById("global-search");
-    const clearBtn = document.getElementById("clear-search");
-
-    input.addEventListener("input", (e) => {
-        clearTimeout(STATE.debounceTimer);
-
-        clearBtn.style.display = e.target.value ? "block" : "none";
-
-        STATE.debounceTimer = setTimeout(() => {
-            STATE.searchQuery = e.target.value.toLowerCase().trim();
-            applyFilters();
-        }, 300);
-    });
-
-    clearBtn.addEventListener("click", () => {
-        input.value = "";
-        clearBtn.style.display = "none";
-        STATE.searchQuery = "";
-        applyFilters();
-    });
-}
-
-/* ---------------- RESET ---------------- */
-
-function setupReset() {
-    document.getElementById("reset-filters").addEventListener("click", () => {
-        document.getElementById("filter-date").value = "";
-        document.getElementById("global-search").value = "";
-        document.getElementById("clear-search").style.display = "none";
-        STATE.searchQuery = "";
-        applyFilters();
     });
 }
 
@@ -178,34 +94,99 @@ function applyFilters() {
     }
 
     STATE.filteredData = { ...STATE.data, GMV: filtered };
-
-    updateFilterSummary(month, filtered.length);
-
-    renderActiveView();
 }
 
-/* ---------------- VIEW ROUTER ---------------- */
+/* ---------------- RENDERERS ---------------- */
 
-function renderActiveView() {
-    if (STATE.currentView === "executive") {
-        renderExecutiveSummary(STATE.filteredData);
-    } else {
-        renderCurrentReport();
-    }
+function renderExecutive() {
+    renderExecutiveSummary(STATE.filteredData);
 }
 
-function renderCurrentReport() {
+function renderReport() {
     if (STATE.currentReport === "date") {
         renderDateWiseReport(STATE.filteredData);
     }
 }
 
-/* ---------------- UI HELPERS ---------------- */
+/* ---------------- FILTER EVENTS ---------------- */
 
-function updateFilterSummary(month, count) {
-    document.getElementById("filter-summary").textContent =
-        `${month} | ${count} Records`;
+function setupFilters() {
+    const monthSelect = document.getElementById("filter-month");
+    const dateSelect = document.getElementById("filter-date");
+
+    const dates = STATE.data.GMV.map(r => r["Order Date"]);
+    const months = [...new Set(dates.map(d => d.slice(0,7)))].sort();
+
+    months.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        monthSelect.appendChild(opt);
+    });
+
+    monthSelect.value = months[months.length - 1];
+
+    monthSelect.addEventListener("change", () => {
+        populateDates();
+        applyFilters();
+        rerenderActive();
+    });
+
+    dateSelect.addEventListener("change", () => {
+        applyFilters();
+        rerenderActive();
+    });
+
+    populateDates();
 }
+
+function populateDates() {
+    const month = document.getElementById("filter-month").value;
+    const dateSelect = document.getElementById("filter-date");
+
+    dateSelect.innerHTML = '<option value="">All Dates</option>';
+
+    const dates = STATE.data.GMV
+        .map(r => r["Order Date"])
+        .filter(d => d.startsWith(month));
+
+    [...new Set(dates)].sort().forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d;
+        opt.textContent = d;
+        dateSelect.appendChild(opt);
+    });
+}
+
+function setupSearch() {
+    const input = document.getElementById("global-search");
+
+    input.addEventListener("input", e => {
+        STATE.searchQuery = e.target.value.toLowerCase().trim();
+        applyFilters();
+        rerenderActive();
+    });
+}
+
+function setupReset() {
+    document.getElementById("reset-filters").addEventListener("click", () => {
+        document.getElementById("filter-date").value = "";
+        document.getElementById("global-search").value = "";
+        STATE.searchQuery = "";
+        applyFilters();
+        rerenderActive();
+    });
+}
+
+function rerenderActive() {
+    if (STATE.currentView === "executive") {
+        renderExecutive();
+    } else {
+        renderReport();
+    }
+}
+
+/* ---------------- LOADING ---------------- */
 
 function showLoading() {
     document.getElementById("progress-wrapper").style.display = "block";
