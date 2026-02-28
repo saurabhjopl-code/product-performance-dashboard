@@ -1,10 +1,10 @@
 export const SHEETS = {
-  GMV: "REPLACE_GMV_LINK",
-  MOM: "REPLACE_MOM_LINK",
-  DATE_WISE: "REPLACE_DATE_WISE_LINK",
-  MONTH_WISE_SKU: "REPLACE_MONTH_WISE_SKU_LINK",
-  MONTH_WISE_LOCATION: "REPLACE_MONTH_WISE_LOCATION_LINK",
-  MONTH_WISE_FULFILLMENT: "REPLACE_MONTH_WISE_FULFILLMENT_LINK",
-  DATE_WISE_VERTICAL: "REPLACE_DATE_WISE_VERTICAL_LINK",
-  MONTH_WISE_VERTICAL: "REPLACE_MONTH_WISE_VERTICAL_LINK"
+  GMV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5f6lc5gca6OccttwEikVrrnarFg1nYXdOUhtE4P04kZxIlrALGewx53wfzEqahNgXS6muKbtxQt8b/pub?gid=0&single=true&output=csv",
+  MOM: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5f6lc5gca6OccttwEikVrrnarFg1nYXdOUhtE4P04kZxIlrALGewx53wfzEqahNgXS6muKbtxQt8b/pub?gid=1120345334&single=true&output=csv",
+  DATE_WISE: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5f6lc5gca6OccttwEikVrrnarFg1nYXdOUhtE4P04kZxIlrALGewx53wfzEqahNgXS6muKbtxQt8b/pub?gid=378965185&single=true&output=csv",
+  MONTH_WISE_SKU: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5f6lc5gca6OccttwEikVrrnarFg1nYXdOUhtE4P04kZxIlrALGewx53wfzEqahNgXS6muKbtxQt8b/pub?gid=485165078&single=true&output=csv",
+  MONTH_WISE_LOCATION: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5f6lc5gca6OccttwEikVrrnarFg1nYXdOUhtE4P04kZxIlrALGewx53wfzEqahNgXS6muKbtxQt8b/pub?gid=824784509&single=true&output=csv",
+  MONTH_WISE_FULFILLMENT: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5f6lc5gca6OccttwEikVrrnarFg1nYXdOUhtE4P04kZxIlrALGewx53wfzEqahNgXS6muKbtxQt8b/pub?gid=241043414&single=true&output=csv",
+  DATE_WISE_VERTICAL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5f6lc5gca6OccttwEikVrrnarFg1nYXdOUhtE4P04kZxIlrALGewx53wfzEqahNgXS6muKbtxQt8b/pub?gid=1993907418&single=true&output=csv",
+  MONTH_WISE_VERTICAL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS5f6lc5gca6OccttwEikVrrnarFg1nYXdOUhtE4P04kZxIlrALGewx53wfzEqahNgXS6muKbtxQt8b/pub?gid=443832949&single=true&output=csv"
 };
