@@ -4,14 +4,14 @@ import { renderSummary } from "./view.js";
 
 export function initGMVSummary() {
   eventBus.on("DATA_LOADING_COMPLETE", compute);
-  eventBus.on("FILTER_APPLIED", compute);
+  eventBus.on("FILTER_CHANGED", compute);
 }
 
 function compute() {
   const state = stateStore.getState();
 
-  const momData = state.rawData?.gmv?.MOM || [];
-  const dateWiseData = state.rawData?.gmv?.DATE_WISE || [];
+  const momData = state.rawData.MOM || [];
+  const dateWiseData = state.rawData.DATE_WISE || [];
 
   const { month, startDate, endDate } = state.filters;
 
@@ -20,11 +20,15 @@ function compute() {
 
   // DATE RANGE FILTER
   if (startDate || endDate) {
-    filteredDateWise = dateWiseData.filter(row => {
-      const rowDate = new Date(row["Order Date"]);
 
-      if (startDate && rowDate < new Date(startDate)) return false;
-      if (endDate && rowDate > new Date(endDate)) return false;
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+
+    filteredDateWise = dateWiseData.filter(row => {
+      const rowDate = parseDDMMYYYY(row["Order Date"]);
+
+      if (start && rowDate < start) return false;
+      if (end && rowDate > end) return false;
 
       return true;
     });
@@ -36,18 +40,18 @@ function compute() {
   else if (month) {
     summaryData = momData.find(row => row.Month === month);
 
-    const selectedDate = new Date(month);
+    const monthDate = parseDDMMYYYY(month);
 
     filteredDateWise = dateWiseData.filter(row => {
-      const rowDate = new Date(row["Order Date"]);
+      const rowDate = parseDDMMYYYY(row["Order Date"]);
       return (
-        rowDate.getMonth() === selectedDate.getMonth() &&
-        rowDate.getFullYear() === selectedDate.getFullYear()
+        rowDate.getMonth() === monthDate.getMonth() &&
+        rowDate.getFullYear() === monthDate.getFullYear()
       );
     });
   }
 
-  // ALL DATA
+  // ALL
   else {
     summaryData = aggregateAll(momData);
     filteredDateWise = dateWiseData;
@@ -64,11 +68,16 @@ function compute() {
     returnUnits: Number(summaryData["Return Units"] || 0),
     netRevenue: Number(summaryData["Final Revenue"] || 0),
     netUnits: Number(summaryData["Final Units"] || 0),
-    cancelPercent: summaryData["Cancel %"] || 0,
-    returnPercent: summaryData["Return %"] || 0,
+    cancelPercent: Number(summaryData["Cancel %"] || 0),
+    returnPercent: Number(summaryData["Return %"] || 0),
     month: month || (startDate || endDate ? "Custom Range" : "All Months"),
     dateWiseData: filteredDateWise
   });
+}
+
+function parseDDMMYYYY(value) {
+  const [day, month, year] = value.split("/");
+  return new Date(`${year}-${month}-${day}`);
 }
 
 function aggregateAll(rows) {
