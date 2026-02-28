@@ -2,9 +2,17 @@ export function initNavbar() {
   const root = document.getElementById("navbar-root");
 
   root.innerHTML = `
+    <!-- Left: Logo -->
     <div>
-      <strong>Product Performance</strong>
+      <img src="./assets/logo.png" class="app-logo" alt="Logo" />
     </div>
+
+    <!-- Center: App Name -->
+    <div class="app-title">
+      PRODUCT PERFORMANCE DASHBOARD
+    </div>
+
+    <!-- Right: Domain Tabs -->
     <div class="nav-tabs">
       <div class="nav-tab active" data-domain="gmv">GMV</div>
       <div class="nav-tab" data-domain="ads">Ads</div>
