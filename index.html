@@ -15,15 +15,42 @@
 
 <div id="app">
 
+    <!-- HEADER -->
     <header class="app-header">
-        <div class="logo">PPD</div>
-        <div class="title">Product Performance Dashboard</div>
+        <div class="left">
+            <div class="logo">PPD</div>
+            <div class="title">Product Performance Dashboard</div>
+        </div>
+
         <nav class="nav">
             <button data-view="executive" class="nav-btn active">Executive</button>
             <button data-view="reports" class="nav-btn">Reports</button>
         </nav>
     </header>
 
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label>Month</label>
+            <select id="filter-month">
+                <option value="">All</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Vertical</label>
+            <select id="filter-vertical">
+                <option value="">All</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- MAIN -->
     <main>
         <section id="executive-view"></section>
         <section id="reports-view" style="display:none;"></section>
