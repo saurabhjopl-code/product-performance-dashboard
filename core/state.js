@@ -4,7 +4,8 @@ import { renderExecutiveSummary } from '../summaries/executiveSummary.js';
 export const STATE = {
     data: {},
     filteredData: {},
-    searchQuery: ""
+    searchQuery: "",
+    debounceTimer: null
 };
 
 export async function initApp() {
@@ -15,59 +16,49 @@ export async function initApp() {
     setupNavigation();
     setupFilters();
     setupSearch();
+    setupReset();
 
-    applyFilters(); // initial render
+    applyFilters();
 
     hideLoading();
 }
 
-/* ---------------- NAVIGATION ---------------- */
-
+/* NAVIGATION */
 function setupNavigation() {
     const buttons = document.querySelectorAll('.nav-btn');
-
     buttons.forEach(btn => {
         btn.addEventListener('click', () => {
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             const view = btn.dataset.view;
-
             document.getElementById('executive-view').style.display =
                 view === "executive" ? "block" : "none";
-
             document.getElementById('reports-view').style.display =
                 view === "reports" ? "block" : "none";
         });
     });
 }
 
-/* ---------------- FILTER SETUP ---------------- */
-
+/* FILTER SETUP */
 function setupFilters() {
-    if (!STATE.data.GMV) return;
-
     const monthSelect = document.getElementById("filter-month");
     const dateSelect = document.getElementById("filter-date");
 
-    const allDates = STATE.data.GMV.map(r => r["Order Date"]);
-    const uniqueMonths = [...new Set(allDates.map(d => d.slice(0, 7)))].sort();
+    const dates = STATE.data.GMV.map(r => r["Order Date"]);
+    const months = [...new Set(dates.map(d => d.slice(0,7)))].sort();
 
-    // Populate months
-    uniqueMonths.forEach(m => {
-        const option = document.createElement("option");
-        option.value = m;
-        option.textContent = m;
-        monthSelect.appendChild(option);
+    months.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        monthSelect.appendChild(opt);
     });
 
-    // Default to current month or latest available
-    const currentMonth = new Date().toISOString().slice(0, 7);
-    if (uniqueMonths.includes(currentMonth)) {
-        monthSelect.value = currentMonth;
-    } else {
-        monthSelect.value = uniqueMonths[uniqueMonths.length - 1];
-    }
+    const currentMonth = new Date().toISOString().slice(0,7);
+    monthSelect.value = months.includes(currentMonth)
+        ? currentMonth
+        : months[months.length - 1];
 
     monthSelect.addEventListener("change", () => {
         populateDates();
@@ -79,41 +70,49 @@ function setupFilters() {
     populateDates();
 }
 
-/* ---------------- DATE DROPDOWN ---------------- */
-
 function populateDates() {
     const month = document.getElementById("filter-month").value;
     const dateSelect = document.getElementById("filter-date");
 
     dateSelect.innerHTML = '<option value="">All Dates</option>';
 
-    const filteredDates = STATE.data.GMV
+    const dates = STATE.data.GMV
         .map(r => r["Order Date"])
         .filter(d => d.startsWith(month));
 
-    const uniqueDates = [...new Set(filteredDates)].sort();
-
-    uniqueDates.forEach(d => {
-        const option = document.createElement("option");
-        option.value = d;
-        option.textContent = d;
-        dateSelect.appendChild(option);
+    [...new Set(dates)].sort().forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d;
+        opt.textContent = d;
+        dateSelect.appendChild(opt);
     });
 }
 
-/* ---------------- GLOBAL SEARCH ---------------- */
-
+/* DEBOUNCED SEARCH */
 function setupSearch() {
-    const searchInput = document.getElementById("global-search");
+    const input = document.getElementById("global-search");
 
-    searchInput.addEventListener("input", (e) => {
-        STATE.searchQuery = e.target.value.toLowerCase().trim();
+    input.addEventListener("input", (e) => {
+        clearTimeout(STATE.debounceTimer);
+
+        STATE.debounceTimer = setTimeout(() => {
+            STATE.searchQuery = e.target.value.toLowerCase().trim();
+            applyFilters();
+        }, 300);
+    });
+}
+
+/* RESET */
+function setupReset() {
+    document.getElementById("reset-filters").addEventListener("click", () => {
+        document.getElementById("filter-date").value = "";
+        document.getElementById("global-search").value = "";
+        STATE.searchQuery = "";
         applyFilters();
     });
 }
 
-/* ---------------- APPLY FILTER PIPELINE ---------------- */
-
+/* APPLY FILTERS */
 function applyFilters() {
     const month = document.getElementById("filter-month").value;
     const date = document.getElementById("filter-date").value;
@@ -126,25 +125,27 @@ function applyFilters() {
         filtered = filtered.filter(r => r["Order Date"] === date);
     }
 
-    // Global Search across key columns
     if (STATE.searchQuery) {
-        filtered = filtered.filter(row => {
-            return Object.values(row).some(value =>
-                String(value).toLowerCase().includes(STATE.searchQuery)
-            );
-        });
+        filtered = filtered.filter(row =>
+            Object.values(row).some(v =>
+                String(v).toLowerCase().includes(STATE.searchQuery)
+            )
+        );
     }
 
-    STATE.filteredData = {
-        ...STATE.data,
-        GMV: filtered
-    };
+    STATE.filteredData = { ...STATE.data, GMV: filtered };
 
+    updateFilterSummary(month, filtered.length);
     renderExecutiveSummary(STATE.filteredData);
 }
 
-/* ---------------- LOADING ---------------- */
+/* SUMMARY BAR */
+function updateFilterSummary(month, count) {
+    document.getElementById("filter-summary").textContent =
+        `${month} | ${count} Records`;
+}
 
+/* LOADING */
 function showLoading() {
     document.getElementById("progress-wrapper").style.display = "block";
 }
