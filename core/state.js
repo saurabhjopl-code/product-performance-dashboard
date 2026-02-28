@@ -8,7 +8,15 @@ export const STATE = {
 };
 
 export async function initApp() {
-    showLoading();
+   function showLoading() {
+    document.querySelector(".progress-container").style.display = "block";
+}
+
+function hideLoading() {
+    setTimeout(() => {
+        document.querySelector(".progress-container").style.display = "none";
+    }, 500);
+}
 
     STATE.data = await loadAllData();
     STATE.filteredData = STATE.data;
