@@ -1,0 +1,1 @@
+// Vertical month report module placeholder

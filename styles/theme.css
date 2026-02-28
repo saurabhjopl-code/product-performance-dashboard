@@ -1,0 +1,12 @@
+.summary-card {
+    border: 1px solid #e5e5e5;
+    padding: 20px;
+}
+.summary-title {
+    font-size: 14px;
+    color: #555;
+}
+.summary-value {
+    font-size: 24px;
+    font-weight: bold;
+}
