@@ -4,7 +4,9 @@ let trendChart = null;
 let splitChart = null;
 
 export function renderExecutiveSummary(data) {
+
     const container = document.getElementById('executive-view');
+    container.innerHTML = ""; // HARD RESET
 
     if (!data.GMV || data.GMV.length === 0) {
         container.innerHTML = "<p>No data available</p>";
@@ -29,38 +31,40 @@ export function renderExecutiveSummary(data) {
     const asp = netUnits ? netRevenue / netUnits : 0;
 
     container.innerHTML = `
-        <div class="summary-row">
-            ${card("Gross Sales", grossRevenue, grossUnits)}
-            ${card("Cancellations", cancelRevenue, cancelUnits)}
-            ${card("Returns", returnRevenue, returnUnits)}
-            ${card("Net Sales", netRevenue, netUnits)}
-        </div>
+        <div class="exec-wrapper">
 
-        <div class="summary-row secondary">
-            ${simpleCard("Cancel %", cancelPct.toFixed(2) + "%")}
-            ${simpleCard("Return %", returnPct.toFixed(2) + "%")}
-            ${simpleCard("Net Realisation %", netRealisation.toFixed(2) + "%")}
-            ${simpleCard("ASP", formatCurrency(asp))}
-        </div>
-
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-title">Date Trend (Gross vs Net Revenue)</div>
-                <canvas id="trendChart"></canvas>
+            <div class="summary-row">
+                ${card("Gross Sales", grossRevenue, grossUnits)}
+                ${card("Cancellations", cancelRevenue, cancelUnits)}
+                ${card("Returns", returnRevenue, returnUnits)}
+                ${card("Net Sales", netRevenue, netUnits)}
             </div>
 
-            <div class="chart-card">
-                <div class="chart-title">Cancel vs Return</div>
-                <canvas id="splitChart"></canvas>
+            <div class="summary-row secondary">
+                ${simpleCard("Cancel %", cancelPct.toFixed(2) + "%")}
+                ${simpleCard("Return %", returnPct.toFixed(2) + "%")}
+                ${simpleCard("Net Realisation %", netRealisation.toFixed(2) + "%")}
+                ${simpleCard("ASP", formatCurrency(asp))}
             </div>
+
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <div class="chart-title">Date Trend (Gross vs Net Revenue)</div>
+                    <canvas id="trendChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Cancel vs Return</div>
+                    <canvas id="splitChart"></canvas>
+                </div>
+            </div>
+
         </div>
     `;
 
     renderTrendChart(data.GMV);
     renderSplitChart(cancelRevenue, returnRevenue);
 }
-
-/* Helpers */
 
 function sum(arr, key) {
     return arr.reduce((s, r) => s + Number(r[key] || 0), 0);
@@ -88,23 +92,21 @@ function simpleCard(title, value) {
 function renderTrendChart(data) {
     const ctx = document.getElementById('trendChart');
 
-    const groupedGross = {};
-    const groupedNet = {};
+    const grossMap = {};
+    const netMap = {};
 
     data.forEach(r => {
-        const date = r["Order Date"];
-        const gross = Number(r.GMV || 0);
-        const net = gross -
-            Number(r["Cancellation Amount"] || 0) -
-            Number(r["Return Amount"] || 0);
+        const d = r["Order Date"];
+        const g = Number(r.GMV || 0);
+        const n = g - Number(r["Cancellation Amount"] || 0) - Number(r["Return Amount"] || 0);
 
-        groupedGross[date] = (groupedGross[date] || 0) + gross;
-        groupedNet[date] = (groupedNet[date] || 0) + net;
+        grossMap[d] = (grossMap[d] || 0) + g;
+        netMap[d] = (netMap[d] || 0) + n;
     });
 
-    const labels = Object.keys(groupedGross).sort();
-    const grossValues = labels.map(l => groupedGross[l]);
-    const netValues = labels.map(l => groupedNet[l]);
+    const labels = Object.keys(grossMap).sort();
+    const grossValues = labels.map(l => grossMap[l]);
+    const netValues = labels.map(l => netMap[l]);
 
     if (trendChart) trendChart.destroy();
 
@@ -113,22 +115,12 @@ function renderTrendChart(data) {
         data: {
             labels,
             datasets: [
-                {
-                    label: "Gross",
-                    data: grossValues,
-                    borderColor: '#999',
-                    tension: 0.3
-                },
-                {
-                    label: "Net",
-                    data: netValues,
-                    borderColor: '#111',
-                    tension: 0.3
-                }
+                { label: "Gross", data: grossValues, borderColor: "#999", tension: 0.3 },
+                { label: "Net", data: netValues, borderColor: "#111", tension: 0.3 }
             ]
         },
         options: {
-            plugins: { legend: { position: 'bottom' } },
+            plugins: { legend: { position: "bottom" } },
             scales: { y: { beginAtZero: true } }
         }
     });
@@ -140,16 +132,16 @@ function renderSplitChart(cancel, returns) {
     if (splitChart) splitChart.destroy();
 
     splitChart = new Chart(ctx, {
-        type: 'doughnut',
+        type: "doughnut",
         data: {
-            labels: ['Cancel', 'Return'],
+            labels: ["Cancel", "Return"],
             datasets: [{
                 data: [cancel, returns],
-                backgroundColor: ['#111', '#999']
+                backgroundColor: ["#111", "#999"]
             }]
         },
         options: {
-            plugins: { legend: { position: 'bottom' } }
+            plugins: { legend: { position: "bottom" } }
         }
     });
 }
