@@ -2,7 +2,9 @@ let state = {
   rawData: {},
   filteredData: {},
   filters: {
-    month: null
+    month: null,
+    startDate: null,
+    endDate: null
   }
 };
 
