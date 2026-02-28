@@ -6,33 +6,22 @@
 
   <title>Product Performance Dashboard</title>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="./assets/favicon.png" />
-
   <link rel="stylesheet" href="./src/ui/theme.css" />
 </head>
 <body>
 
-  <!-- Progress Bar -->
   <div id="progress-root"></div>
-
-  <!-- Header -->
   <header id="navbar-root"></header>
-
-  <!-- Filters -->
   <section id="filters-root"></section>
-
-  <!-- Executive Section -->
   <main id="executive-root"></main>
-
-  <!-- Reports Section -->
   <section id="reports-root"></section>
 
-  <!-- Load Vendor Libraries FIRST -->
-  <script src="./vendor/papaparse.min.js"></script>
-  <script src="./vendor/chart.min.js"></script>
+  <!-- ✅ Load Libraries from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Then Load App -->
+  <!-- App -->
   <script type="module" src="./src/main.js"></script>
 
 </body>
