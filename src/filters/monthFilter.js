@@ -5,8 +5,9 @@ export function initMonthFilter() {
   const root = document.getElementById("filters-root");
 
   root.innerHTML = `
-    <div style="padding:16px 32px;">
-      <select id="month-filter">
+    <div class="filter-group">
+      <div class="filter-label">Month</div>
+      <select id="month-filter" class="filter-select">
         <option value="">All Months</option>
       </select>
     </div>
