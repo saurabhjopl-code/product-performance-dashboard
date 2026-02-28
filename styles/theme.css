@@ -1,3 +1,5 @@
+/* KPI ROW */
+
 .summary-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -8,6 +10,8 @@
 .summary-row.secondary {
     margin-top: 14px;
 }
+
+/* KPI CARDS */
 
 .kpi-card {
     background: #ffffff;
@@ -36,6 +40,35 @@
     font-size: 13px;
     color: #444;
 }
+
+/* RESET BUTTON — CLEAN SaaS STYLE */
+
+.reset-btn {
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    padding: 0 6px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.reset-btn:hover {
+    color: #111;
+}
+
+/* FILTER SUMMARY */
+
+.filter-summary {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #555;
+}
+
+/* CHARTS */
 
 .chart-grid {
     display: grid;
