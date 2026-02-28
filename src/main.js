@@ -6,14 +6,20 @@ import { eventBus } from "./core/eventBus.js";
 
 import { initGMVSummary } from "./domains/gmv/summary/index.js";
 import { initMonthFilter } from "./filters/monthFilter.js";
+import { initDateFilter } from "./filters/dateFilter.js";
+import { initFilterController } from "./filters/filterController.js";
+
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   initProgressBar();
   initNavbar();
   initLayout();
   initMonthFilter();
+  initDateFilter();
+  initFilterController();
   initGMVSummary();
-
+  
   eventBus.on("DATA_LOADING_START", startProgress);
   eventBus.on("DATA_LOADING_COMPLETE", finishProgress);
 
