@@ -14,16 +14,14 @@ export function initMonthFilter() {
   `;
 
   eventBus.on("DATA_LOADING_COMPLETE", () => {
-    const data = stateStore.getState().rawData.gmv.MOM;
-
-    const months = [...new Set(data.map(d => d.Month))];
+    const momData = stateStore.getState().rawData.gmv.MOM || [];
 
     const select = document.getElementById("month-filter");
 
-    months.forEach(m => {
+    momData.forEach(row => {
       const option = document.createElement("option");
-      option.value = m;
-      option.textContent = m;
+      option.value = row.Month;
+      option.textContent = row.Month;
       select.appendChild(option);
     });
   });
