@@ -127,3 +127,24 @@ header {
 #reports-root {
   padding: 40px;
 }
+/* PROGRESS BAR */
+.progress-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.progress-track {
+  width: 100%;
+  height: 3px;
+  background: transparent;
+}
+
+.progress-fill {
+  height: 3px;
+  width: 0%;
+  background: #000;
+  transition: width 0.2s ease;
+}
