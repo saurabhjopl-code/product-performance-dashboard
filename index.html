@@ -15,7 +15,6 @@
 
 <div id="app">
 
-    <!-- HEADER -->
     <header class="app-header">
         <div class="left">
             <div class="logo">PPD</div>
@@ -30,20 +29,31 @@
 
     <!-- FILTER BAR -->
     <div class="filter-bar">
-        <div class="filter-group">
-            <label>Month</label>
-            <select id="filter-month">
-                <option value="">All</option>
-            </select>
+
+        <div class="filters-left">
+            <div class="filter-group">
+                <label>Month</label>
+                <select id="filter-month"></select>
+            </div>
+
+            <div class="filter-group">
+                <label>Date</label>
+                <select id="filter-date">
+                    <option value="">All Dates</option>
+                </select>
+            </div>
         </div>
+
+        <div class="filters-right">
+            <input type="text" id="global-search" placeholder="Search SKU / Product / Location..." />
+        </div>
+
     </div>
 
-    <!-- PROGRESS BAR -->
     <div class="progress-wrapper" id="progress-wrapper">
         <div class="progress-bar"></div>
     </div>
 
-    <!-- MAIN -->
     <main>
         <section id="executive-view"></section>
         <section id="reports-view" style="display:none;"></section>
