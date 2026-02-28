@@ -9,47 +9,54 @@ export function initGMVSummary() {
 
 function compute() {
   const state = stateStore.getState();
-  const raw = state.rawData.gmv.GMV || [];
+  const momData = state.rawData.gmv.MOM || [];
   const selectedMonth = state.filters.month;
 
-  let data = raw;
+  let data;
 
   if (selectedMonth) {
-    data = raw.filter(row => {
-      const date = new Date(row["Order Date"]);
-      const monthName = date.toLocaleString("default", { month: "short" });
-      const year = date.getFullYear();
-      const formatted = `${monthName}-${year}`;
-      return formatted === selectedMonth;
-    });
+    data = momData.find(row => row.Month === selectedMonth);
+  } else {
+    // Aggregate all months
+    data = aggregateAll(momData);
   }
 
-  const grossSales = data.reduce((s, d) => s + Number(d["GMV"] || 0), 0);
-  const grossUnits = data.reduce((s, d) => s + Number(d["Gross Units"] || 0), 0);
-
-  const cancelRevenue = data.reduce((s, d) => s + Number(d["Cancellation Amount"] || 0), 0);
-  const cancelUnits = data.reduce((s, d) => s + Number(d["Cancellation Units"] || 0), 0);
-
-  const returnRevenue = data.reduce((s, d) => s + Number(d["Return Amount"] || 0), 0);
-  const returnUnits = data.reduce((s, d) => s + Number(d["Return Units"] || 0), 0);
-
-  const netRevenue = data.reduce((s, d) => s + Number(d["Final Sale Amount"] || 0), 0);
-  const netUnits = data.reduce((s, d) => s + Number(d["Final Sale Units"] || 0), 0);
-
-  const cancelPercent = grossSales ? ((cancelRevenue / grossSales) * 100).toFixed(2) : 0;
-  const returnPercent = grossSales ? ((returnRevenue / grossSales) * 100).toFixed(2) : 0;
+  if (!data) return;
 
   renderSummary({
-    grossSales,
-    grossUnits,
-    cancelRevenue,
-    cancelUnits,
-    returnRevenue,
-    returnUnits,
-    netRevenue,
-    netUnits,
-    cancelPercent,
-    returnPercent,
+    grossSales: Number(data.GMV || 0),
+    grossUnits: Number(data["Gross Units"] || 0),
+    cancelRevenue: Number(data["Cancel Amount"] || 0),
+    cancelUnits: Number(data["Cancel Units"] || 0),
+    returnRevenue: Number(data["Return Amount"] || 0),
+    returnUnits: Number(data["Return Units"] || 0),
+    netRevenue: Number(data["Final Revenue"] || 0),
+    netUnits: Number(data["Final Units"] || 0),
+    cancelPercent: Number(data["Cancel %"] || 0),
+    returnPercent: Number(data["Return %"] || 0),
     month: selectedMonth || "All Months"
+  });
+}
+
+function aggregateAll(rows) {
+  return rows.reduce((acc, row) => {
+    acc["Gross Units"] += Number(row["Gross Units"] || 0);
+    acc.GMV += Number(row.GMV || 0);
+    acc["Cancel Units"] += Number(row["Cancel Units"] || 0);
+    acc["Cancel Amount"] += Number(row["Cancel Amount"] || 0);
+    acc["Return Units"] += Number(row["Return Units"] || 0);
+    acc["Return Amount"] += Number(row["Return Amount"] || 0);
+    acc["Final Units"] += Number(row["Final Units"] || 0);
+    acc["Final Revenue"] += Number(row["Final Revenue"] || 0);
+    return acc;
+  }, {
+    "Gross Units": 0,
+    GMV: 0,
+    "Cancel Units": 0,
+    "Cancel Amount": 0,
+    "Return Units": 0,
+    "Return Amount": 0,
+    "Final Units": 0,
+    "Final Revenue": 0
   });
 }
