@@ -40,7 +40,7 @@ function setupNavigation() {
     });
 }
 
-/* FILTER SETUP */
+/* FILTERS */
 function setupFilters() {
     const monthSelect = document.getElementById("filter-month");
     const dateSelect = document.getElementById("filter-date");
@@ -88,17 +88,27 @@ function populateDates() {
     });
 }
 
-/* DEBOUNCED SEARCH */
+/* SEARCH WITH CLEAR + DEBOUNCE */
 function setupSearch() {
     const input = document.getElementById("global-search");
+    const clearBtn = document.getElementById("clear-search");
 
     input.addEventListener("input", (e) => {
         clearTimeout(STATE.debounceTimer);
+
+        clearBtn.style.display = e.target.value ? "block" : "none";
 
         STATE.debounceTimer = setTimeout(() => {
             STATE.searchQuery = e.target.value.toLowerCase().trim();
             applyFilters();
         }, 300);
+    });
+
+    clearBtn.addEventListener("click", () => {
+        input.value = "";
+        clearBtn.style.display = "none";
+        STATE.searchQuery = "";
+        applyFilters();
     });
 }
 
@@ -107,6 +117,7 @@ function setupReset() {
     document.getElementById("reset-filters").addEventListener("click", () => {
         document.getElementById("filter-date").value = "";
         document.getElementById("global-search").value = "";
+        document.getElementById("clear-search").style.display = "none";
         STATE.searchQuery = "";
         applyFilters();
     });
@@ -139,7 +150,7 @@ function applyFilters() {
     renderExecutiveSummary(STATE.filteredData);
 }
 
-/* SUMMARY BAR */
+/* SUMMARY */
 function updateFilterSummary(month, count) {
     document.getElementById("filter-summary").textContent =
         `${month} | ${count} Records`;
