@@ -1,26 +1,38 @@
+body {
+    background: #f8f9fb;
+}
+
+#app {
+    max-width: 1400px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* HEADER */
 .app-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 20px 0;
-    border-bottom: 1px solid #e5e5e5;
+    align-items: center;
+    padding-bottom: 15px;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .logo {
-    font-weight: bold;
+    font-weight: 700;
     font-size: 18px;
 }
 
 .title {
-    font-size: 16px;
-    letter-spacing: 1px;
+    font-size: 15px;
+    color: #555;
 }
 
-.nav {
-    display: flex;
-    gap: 10px;
-}
-
+/* NAV */
 .nav-btn {
     background: none;
     border: 1px solid #111;
@@ -34,6 +46,40 @@
     color: #fff;
 }
 
+/* FILTER BAR */
+.filter-bar {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+}
+
+.filter-group select {
+    margin-top: 4px;
+    padding: 6px;
+}
+
+/* PROGRESS */
+.progress-container {
+    height: 3px;
+    background: #eee;
+}
+
+.progress-bar {
+    height: 3px;
+    width: 0%;
+    background: #111;
+    transition: width 0.4s ease;
+}
+
+/* SUMMARY GRID */
 .summary-grid {
     margin-top: 30px;
     display: grid;
