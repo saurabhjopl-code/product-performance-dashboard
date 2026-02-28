@@ -1,38 +1,41 @@
-let progressInterval = null;
+let progressTimer = null;
 
 export function initProgressBar() {
   const root = document.getElementById("progress-root");
 
   root.innerHTML = `
-    <div class="progress-container">
-      <div class="progress-bar" id="progress-bar"></div>
+    <div class="progress-wrapper">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
     </div>
   `;
 }
 
 export function startProgress() {
-  const bar = document.getElementById("progress-bar");
-  if (!bar) return;
+  const fill = document.getElementById("progress-fill");
+  if (!fill) return;
 
-  let width = 0;
-  bar.style.width = "0%";
+  let width = 5;
+  fill.style.width = width + "%";
 
-  progressInterval = setInterval(() => {
-    if (width < 85) {
-      width += 5;
-      bar.style.width = width + "%";
+  progressTimer = setInterval(() => {
+    if (width < 90) {
+      width += 3;
+      fill.style.width = width + "%";
     }
-  }, 100);
+  }, 120);
 }
 
 export function finishProgress() {
-  const bar = document.getElementById("progress-bar");
-  if (!bar) return;
+  const fill = document.getElementById("progress-fill");
+  if (!fill) return;
 
-  clearInterval(progressInterval);
-  bar.style.width = "100%";
+  clearInterval(progressTimer);
+
+  fill.style.width = "100%";
 
   setTimeout(() => {
-    bar.style.width = "0%";
+    fill.style.width = "0%";
   }, 400);
 }
