@@ -28,22 +28,6 @@ export function renderExecutiveSummary(data) {
     const netRealisation = grossRevenue ? (netRevenue / grossRevenue) * 100 : 0;
     const asp = netUnits ? netRevenue / netUnits : 0;
 
-    const currentMonth = document.getElementById("filter-month").value;
-    const previousMonth = getPreviousMonth(currentMonth);
-
-    const prevMonthData = data.GMV.filter(r =>
-        r["Order Date"].startsWith(previousMonth)
-    );
-
-    const prevNetRevenue =
-        sum(prevMonthData, "GMV") -
-        sum(prevMonthData, "Cancellation Amount") -
-        sum(prevMonthData, "Return Amount");
-
-    const momChange = prevNetRevenue
-        ? ((netRevenue - prevNetRevenue) / prevNetRevenue) * 100
-        : 0;
-
     container.innerHTML = `
         <div class="summary-row">
             ${card("Gross Sales", grossRevenue, grossUnits)}
@@ -57,10 +41,6 @@ export function renderExecutiveSummary(data) {
             ${simpleCard("Return %", returnPct.toFixed(2) + "%")}
             ${simpleCard("Net Realisation %", netRealisation.toFixed(2) + "%")}
             ${simpleCard("ASP", formatCurrency(asp))}
-        </div>
-
-        <div class="summary-row secondary">
-            ${simpleCard("MoM Change (Net)", momChange.toFixed(2) + "%")}
         </div>
 
         <div class="chart-grid">
@@ -84,12 +64,6 @@ export function renderExecutiveSummary(data) {
 
 function sum(arr, key) {
     return arr.reduce((s, r) => s + Number(r[key] || 0), 0);
-}
-
-function getPreviousMonth(month) {
-    const date = new Date(month + "-01");
-    date.setMonth(date.getMonth() - 1);
-    return date.toISOString().slice(0,7);
 }
 
 function card(title, revenue, units) {
