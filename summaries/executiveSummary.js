@@ -23,6 +23,11 @@ export function renderExecutiveSummary(data) {
     const netRevenue = grossRevenue - cancelRevenue - returnRevenue;
     const netUnits = grossUnits - cancelUnits - returnUnits;
 
+    const cancelPct = grossRevenue ? (cancelRevenue / grossRevenue) * 100 : 0;
+    const returnPct = grossRevenue ? (returnRevenue / grossRevenue) * 100 : 0;
+    const netRealisation = grossRevenue ? (netRevenue / grossRevenue) * 100 : 0;
+    const asp = netUnits ? netRevenue / netUnits : 0;
+
     const currentMonth = document.getElementById("filter-month").value;
     const previousMonth = getPreviousMonth(currentMonth);
 
@@ -48,12 +53,19 @@ export function renderExecutiveSummary(data) {
         </div>
 
         <div class="summary-row secondary">
+            ${simpleCard("Cancel %", cancelPct.toFixed(2) + "%")}
+            ${simpleCard("Return %", returnPct.toFixed(2) + "%")}
+            ${simpleCard("Net Realisation %", netRealisation.toFixed(2) + "%")}
+            ${simpleCard("ASP", formatCurrency(asp))}
+        </div>
+
+        <div class="summary-row secondary">
             ${simpleCard("MoM Change (Net)", momChange.toFixed(2) + "%")}
         </div>
 
         <div class="chart-grid">
             <div class="chart-card">
-                <div class="chart-title">Date Trend (Net Revenue)</div>
+                <div class="chart-title">Date Trend (Gross vs Net Revenue)</div>
                 <canvas id="trendChart"></canvas>
             </div>
 
@@ -99,24 +111,26 @@ function simpleCard(title, value) {
     `;
 }
 
-/* Charts */
-
 function renderTrendChart(data) {
     const ctx = document.getElementById('trendChart');
 
-    const grouped = {};
+    const groupedGross = {};
+    const groupedNet = {};
+
     data.forEach(r => {
         const date = r["Order Date"];
-        const net =
-            Number(r.GMV || 0) -
+        const gross = Number(r.GMV || 0);
+        const net = gross -
             Number(r["Cancellation Amount"] || 0) -
             Number(r["Return Amount"] || 0);
 
-        grouped[date] = (grouped[date] || 0) + net;
+        groupedGross[date] = (groupedGross[date] || 0) + gross;
+        groupedNet[date] = (groupedNet[date] || 0) + net;
     });
 
-    const labels = Object.keys(grouped).sort();
-    const values = labels.map(l => grouped[l]);
+    const labels = Object.keys(groupedGross).sort();
+    const grossValues = labels.map(l => groupedGross[l]);
+    const netValues = labels.map(l => groupedNet[l]);
 
     if (trendChart) trendChart.destroy();
 
@@ -124,15 +138,23 @@ function renderTrendChart(data) {
         type: 'line',
         data: {
             labels,
-            datasets: [{
-                data: values,
-                borderColor: '#111',
-                backgroundColor: 'rgba(0,0,0,0.05)',
-                tension: 0.3
-            }]
+            datasets: [
+                {
+                    label: "Gross",
+                    data: grossValues,
+                    borderColor: '#999',
+                    tension: 0.3
+                },
+                {
+                    label: "Net",
+                    data: netValues,
+                    borderColor: '#111',
+                    tension: 0.3
+                }
+            ]
         },
         options: {
-            plugins: { legend: { display: false } },
+            plugins: { legend: { position: 'bottom' } },
             scales: { y: { beginAtZero: true } }
         }
     });
