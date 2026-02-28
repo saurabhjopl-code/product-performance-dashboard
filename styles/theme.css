@@ -1,9 +1,13 @@
+/* KPI ROW */
+
 .summary-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 18px;
     margin-top: 20px;
 }
+
+/* KPI CARD */
 
 .kpi-card {
     background: #ffffff;
@@ -29,18 +33,27 @@
     color: #444;
 }
 
+/* RESET BUTTON (Adjusted to match filters) */
+
 .reset-btn {
-    padding: 9px 14px;
+    height: 38px;                 /* match select height */
+    padding: 0 14px;
     border-radius: 10px;
     border: 1px solid #dcdfe4;
-    background: #fff;
+    background: #fafbfc;
     cursor: pointer;
     font-size: 13px;
+    color: #444;
+    transition: all 0.2s ease;
+    align-self: flex-end;         /* align with dropdown */
 }
 
 .reset-btn:hover {
     border-color: #111;
+    background: #ffffff;
 }
+
+/* FILTER SUMMARY */
 
 .filter-summary {
     margin-top: 10px;
