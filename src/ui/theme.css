@@ -12,18 +12,33 @@ body {
   line-height: 1.5;
 }
 
-/* Header */
+/* HEADER */
 header {
   border-bottom: 1px solid #e5e5e5;
   padding: 16px 32px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
 }
 
-/* Tabs */
+/* Logo (Left) */
+.app-logo {
+  height: 34px;
+}
+
+/* App Title (Center) */
+.app-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #000;
+}
+
+/* Tabs (Right) */
 .nav-tabs {
   display: flex;
+  justify-content: flex-end;
   gap: 24px;
 }
 
@@ -32,6 +47,11 @@ header {
   font-size: 14px;
   font-weight: 500;
   color: #666;
+  transition: all 0.2s ease;
+}
+
+.nav-tab:hover {
+  color: #000;
 }
 
 .nav-tab.active {
