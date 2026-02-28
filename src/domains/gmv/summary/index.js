@@ -9,32 +9,47 @@ export function initGMVSummary() {
 
 function compute() {
   const state = stateStore.getState();
-  const momData = state.rawData.gmv.MOM || [];
+
+  const momData = state.rawData?.gmv?.MOM || [];
+  const dateWiseData = state.rawData?.gmv?.DATE_WISE || [];
   const selectedMonth = state.filters.month;
 
-  let data;
+  let summaryData;
+  let filteredDateWise;
 
   if (selectedMonth) {
-    data = momData.find(row => row.Month === selectedMonth);
+    summaryData = momData.find(row => row.Month === selectedMonth);
+
+    const selectedDate = new Date(selectedMonth);
+
+    filteredDateWise = dateWiseData.filter(row => {
+      const rowDate = new Date(row["Order Date"]);
+      return (
+        rowDate.getMonth() === selectedDate.getMonth() &&
+        rowDate.getFullYear() === selectedDate.getFullYear()
+      );
+    });
+
   } else {
-    // Aggregate all months
-    data = aggregateAll(momData);
+    summaryData = aggregateAll(momData);
+    filteredDateWise = dateWiseData;
   }
 
-  if (!data) return;
+  if (!summaryData) return;
 
   renderSummary({
-    grossSales: Number(data.GMV || 0),
-    grossUnits: Number(data["Gross Units"] || 0),
-    cancelRevenue: Number(data["Cancel Amount"] || 0),
-    cancelUnits: Number(data["Cancel Units"] || 0),
-    returnRevenue: Number(data["Return Amount"] || 0),
-    returnUnits: Number(data["Return Units"] || 0),
-    netRevenue: Number(data["Final Revenue"] || 0),
-    netUnits: Number(data["Final Units"] || 0),
-    cancelPercent: Number(data["Cancel %"] || 0),
-    returnPercent: Number(data["Return %"] || 0),
-    month: selectedMonth || "All Months"
+    grossSales: Number(summaryData.GMV || 0),
+    grossUnits: Number(summaryData["Gross Units"] || 0),
+    cancelRevenue: Number(summaryData["Cancel Amount"] || 0),
+    cancelUnits: Number(summaryData["Cancel Units"] || 0),
+    returnRevenue: Number(summaryData["Return Amount"] || 0),
+    returnUnits: Number(summaryData["Return Units"] || 0),
+    netRevenue: Number(summaryData["Final Revenue"] || 0),
+    netUnits: Number(summaryData["Final Units"] || 0),
+    cancelPercent: Number(summaryData["Cancel %"] || 0),
+    returnPercent: Number(summaryData["Return %"] || 0),
+    month: selectedMonth || "All Months",
+    dateWiseData: filteredDateWise
   });
 }
 
