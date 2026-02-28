@@ -7,6 +7,7 @@ export const STATE = {
     filteredData: {},
     searchQuery: "",
     debounceTimer: null,
+    currentView: "executive",
     currentReport: "date"
 };
 
@@ -21,12 +22,13 @@ export async function initApp() {
     setupSearch();
     setupReset();
 
-    applyFilters();
+    applyFilters();   // only updates STATE
 
     hideLoading();
 }
 
-/* MAIN NAV */
+/* ---------------- MAIN NAV ---------------- */
+
 function setupNavigation() {
     const buttons = document.querySelectorAll('.nav-btn');
 
@@ -35,22 +37,21 @@ function setupNavigation() {
             buttons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            const view = btn.dataset.view;
+            STATE.currentView = btn.dataset.view;
 
             document.getElementById('executive-view').style.display =
-                view === "executive" ? "block" : "none";
+                STATE.currentView === "executive" ? "block" : "none";
 
             document.getElementById('reports-view').style.display =
-                view === "reports" ? "block" : "none";
+                STATE.currentView === "reports" ? "block" : "none";
 
-            if (view === "reports") {
-                renderCurrentReport();
-            }
+            renderActiveView();
         });
     });
 }
 
-/* REPORT NAV */
+/* ---------------- REPORT NAV ---------------- */
+
 function setupReportNavigation() {
     const buttons = document.querySelectorAll('.report-btn');
 
@@ -60,18 +61,16 @@ function setupReportNavigation() {
             btn.classList.add('active');
 
             STATE.currentReport = btn.dataset.report;
-            renderCurrentReport();
+
+            if (STATE.currentView === "reports") {
+                renderCurrentReport();
+            }
         });
     });
 }
 
-function renderCurrentReport() {
-    if (STATE.currentReport === "date") {
-        renderDateWiseReport(STATE.filteredData);
-    }
-}
+/* ---------------- FILTERS ---------------- */
 
-/* FILTERS */
 function setupFilters() {
     const monthSelect = document.getElementById("filter-month");
     const dateSelect = document.getElementById("filter-date");
@@ -119,7 +118,8 @@ function populateDates() {
     });
 }
 
-/* SEARCH */
+/* ---------------- SEARCH ---------------- */
+
 function setupSearch() {
     const input = document.getElementById("global-search");
     const clearBtn = document.getElementById("clear-search");
@@ -143,7 +143,8 @@ function setupSearch() {
     });
 }
 
-/* RESET */
+/* ---------------- RESET ---------------- */
+
 function setupReset() {
     document.getElementById("reset-filters").addEventListener("click", () => {
         document.getElementById("filter-date").value = "";
@@ -154,7 +155,8 @@ function setupReset() {
     });
 }
 
-/* APPLY FILTERS */
+/* ---------------- FILTER ENGINE ---------------- */
+
 function applyFilters() {
     const month = document.getElementById("filter-month").value;
     const date = document.getElementById("filter-date").value;
@@ -178,19 +180,33 @@ function applyFilters() {
     STATE.filteredData = { ...STATE.data, GMV: filtered };
 
     updateFilterSummary(month, filtered.length);
-    renderExecutiveSummary(STATE.filteredData);
 
-    if (document.getElementById('reports-view').style.display === "block") {
+    renderActiveView();
+}
+
+/* ---------------- VIEW ROUTER ---------------- */
+
+function renderActiveView() {
+    if (STATE.currentView === "executive") {
+        renderExecutiveSummary(STATE.filteredData);
+    } else {
         renderCurrentReport();
     }
 }
+
+function renderCurrentReport() {
+    if (STATE.currentReport === "date") {
+        renderDateWiseReport(STATE.filteredData);
+    }
+}
+
+/* ---------------- UI HELPERS ---------------- */
 
 function updateFilterSummary(month, count) {
     document.getElementById("filter-summary").textContent =
         `${month} | ${count} Records`;
 }
 
-/* LOADING */
 function showLoading() {
     document.getElementById("progress-wrapper").style.display = "block";
 }
