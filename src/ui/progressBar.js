@@ -8,8 +8,16 @@ export function initProgressBar() {
   `;
 }
 
-export function setProgress(value) {
+export function startProgress() {
   const bar = document.getElementById("progress-bar");
-  if (!bar) return;
-  bar.style.width = value + "%";
+  bar.style.width = "20%";
+}
+
+export function finishProgress() {
+  const bar = document.getElementById("progress-bar");
+  bar.style.width = "100%";
+
+  setTimeout(() => {
+    bar.style.width = "0%";
+  }, 400);
 }
