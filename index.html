@@ -13,18 +13,28 @@
 </head>
 <body>
 
-    <div id="app">
-        <header id="header"></header>
-        <main>
-            <section id="summary"></section>
-            <section id="reports"></section>
-        </main>
-    </div>
+<div id="app">
 
-    <script type="module">
-        import { initApp } from './core/state.js';
-        initApp();
-    </script>
+    <header class="app-header">
+        <div class="logo">PPD</div>
+        <div class="title">Product Performance Dashboard</div>
+        <nav class="nav">
+            <button data-view="executive" class="nav-btn active">Executive</button>
+            <button data-view="reports" class="nav-btn">Reports</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="executive-view"></section>
+        <section id="reports-view" style="display:none;"></section>
+    </main>
+
+</div>
+
+<script type="module">
+    import { initApp } from './core/state.js';
+    initApp();
+</script>
 
 </body>
 </html>
