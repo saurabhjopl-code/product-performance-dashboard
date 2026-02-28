@@ -1,26 +1,49 @@
-.summary-card {
+.summary-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.kpi-card {
     background: #ffffff;
     border: 1px solid #e6e8ec;
-    padding: 26px;
-    border-radius: 16px;
-    transition: all 0.2s ease;
+    border-radius: 14px;
+    padding: 20px 22px;
 }
 
-.summary-card:hover {
-    transform: translateY(-3px);
-    border-color: #d1d5db;
+.kpi-title {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
 }
 
-.summary-title {
-    font-size: 12px;
-    color: #777;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.summary-value {
-    font-size: 28px;
+.kpi-main {
+    font-size: 20px;
     font-weight: 600;
     color: #111;
+}
+
+.kpi-sub {
+    font-size: 13px;
+    color: #444;
+}
+
+.reset-btn {
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: 1px solid #dcdfe4;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.reset-btn:hover {
+    border-color: #111;
+}
+
+.filter-summary {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #555;
 }
