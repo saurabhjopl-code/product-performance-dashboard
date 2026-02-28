@@ -4,7 +4,7 @@ import { renderSummary } from "./view.js";
 
 export function initGMVSummary() {
   eventBus.on("DATA_LOADING_COMPLETE", compute);
-  eventBus.on("FILTER_CHANGED", compute);
+  eventBus.on("FILTER_APPLIED", compute);
 }
 
 function compute() {
