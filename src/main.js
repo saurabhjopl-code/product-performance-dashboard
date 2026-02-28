@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   initMonthFilter();
   initGMVSummary();
 
-  eventBus.on("DATA_LOADING_START", () => setProgress(30));
-  eventBus.on("DATA_LOADING_COMPLETE", () => setProgress(100));
+  eventBus.on("DATA_LOADING_START", startProgress);
+eventBus.on("DATA_LOADING_COMPLETE", finishProgress);
 
   await loadAllData();
 });
