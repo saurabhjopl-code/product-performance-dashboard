@@ -1,16 +1,13 @@
-body {
-    background: #ffffff;
-    color: #111111;
-}
-
 .summary-card {
+    background: #fff;
     border: 1px solid #e5e5e5;
     padding: 24px;
+    border-radius: 6px;
 }
 
 .summary-title {
     font-size: 13px;
-    color: #666;
+    color: #777;
     margin-bottom: 8px;
 }
 
