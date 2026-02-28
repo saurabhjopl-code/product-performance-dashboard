@@ -1,28 +1,29 @@
-/* App Background */
+/* Background */
 body {
     background: #f4f6f9;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* App Container */
+/* Container */
 #app {
     max-width: 1500px;
     margin: auto;
     padding: 24px 32px 60px;
 }
 
-/* ---------------- HEADER ---------------- */
-
+/* HEADER */
 .app-header {
     position: sticky;
     top: 0;
-    background: #f4f6f9;
     z-index: 100;
-    padding-bottom: 16px;
-    margin-bottom: 10px;
+    background: #f4f6f9;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    padding-bottom: 16px;
 }
 
 .left {
@@ -34,7 +35,6 @@ body {
 .logo {
     font-weight: 700;
     font-size: 18px;
-    letter-spacing: 1px;
 }
 
 .title {
@@ -42,8 +42,7 @@ body {
     color: #666;
 }
 
-/* ---------------- NAVIGATION ---------------- */
-
+/* NAVIGATION */
 .nav {
     background: #ffffff;
     padding: 6px;
@@ -72,8 +71,7 @@ body {
     color: #fff;
 }
 
-/* ---------------- FILTER BAR ---------------- */
-
+/* FILTER BAR */
 .filter-bar {
     position: sticky;
     top: 70px;
@@ -91,7 +89,6 @@ body {
     display: flex;
     gap: 30px;
     align-items: center;
-    flex-wrap: wrap;
 }
 
 .filter-group {
@@ -108,47 +105,33 @@ body {
     border: 1px solid #dcdfe4;
     background: #fafbfc;
     font-size: 13px;
-    outline: none;
-    transition: all 0.2s ease;
 }
 
-.filter-group select:hover {
-    border-color: #bbb;
-}
+/* PROGRESS BAR */
 
-.filter-group select:focus {
-    border-color: #111;
-    background: #fff;
-}
-
-/* ---------------- PROGRESS BAR ---------------- */
-
-.progress-container {
+.progress-wrapper {
     position: relative;
     height: 3px;
-    background: transparent;
+    width: 100%;
     overflow: hidden;
+    display: none;
 }
 
 .progress-bar {
+    position: absolute;
     height: 3px;
     width: 30%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        #111,
-        transparent
-    );
-    animation: loading 1.2s infinite;
+    background: #111;
+    animation: loading 1.2s infinite ease-in-out;
 }
 
 @keyframes loading {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(400%); }
+    0%   { left: -30%; }
+    50%  { left: 50%; }
+    100% { left: 100%; }
 }
 
-/* ---------------- SUMMARY GRID ---------------- */
-
+/* SUMMARY GRID */
 .summary-grid {
     margin-top: 20px;
     display: grid;
