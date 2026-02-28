@@ -171,3 +171,16 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
 }
+.reset-btn {
+    border: 1px solid #e6e8ec;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+    border-color: #111;
+}
